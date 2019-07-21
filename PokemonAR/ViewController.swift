@@ -11,6 +11,8 @@ import SceneKit
 import ARKit
 
 class ViewController: UIViewController, ARSCNViewDelegate {
+    
+    var onceExec = OnceExec()
 
     // ARSCNViewの設定
     @IBOutlet var sceneView: ARSCNView!
@@ -23,7 +25,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         // fps情報などを表示
         sceneView.showsStatistics = true
         // デバッグ用に特徴点を表示
-        sceneView.debugOptions = ARSCNDebugOptions.showFeaturePoints
+        // sceneView.debugOptions = ARSCNDebugOptions.showFeaturePoints
         //Viewに初期化したsceneをセット
         sceneView.scene = SCNScene()
     }
@@ -37,8 +39,12 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         configuration.planeDetection = .horizontal
         // 空間から光の情報を取得し画面上のライトの情報に適応
         configuration.isLightEstimationEnabled = true
-        // sessionをスタート
-        sceneView.session.run(configuration)
+        
+        // 一度（3Dモデル1体）だけ表示する
+        onceExec.call {
+            // sessionをスタート
+            sceneView.session.run(configuration)
+        }
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -69,5 +75,15 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         DispatchQueue.main.async(execute: {
             node.addChildNode(bearNode)
         })
+    }
+}
+
+class OnceExec {
+    var isExec = false
+    func call(onceExec: ()->()){
+        if !isExec {
+            onceExec()
+            isExec = true
+        }
     }
 }
