@@ -40,11 +40,8 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         // 空間から光の情報を取得し画面上のライトの情報に適応
         configuration.isLightEstimationEnabled = true
         
-        // 一度（3Dモデル1体）だけ表示する
-        onceExec.call {
-            // sessionをスタート
-            sceneView.session.run(configuration)
-        }
+        // sessionをスタート
+        sceneView.session.run(configuration)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -57,24 +54,27 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     // ARSCNViewDelegateのメソッド
     // 平面を新たに検知した際に、呼ばれるrenderer(_:didAdd:for:)で、検知したNodeに3DオブジェクトのNodeを追加
     func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
-        guard let planeAnchor = anchor as? ARPlaneAnchor else {fatalError()}
-        //sceneとnodeを読み込み
-        guard let scene = SCNScene(named: "model.scn", inDirectory: "art.scnassets/Raikou") else {fatalError()}
-        guard let bearNode = scene.rootNode.childNode(withName: "SketchUp", recursively: true) else {fatalError()}
+        // 一度（3Dモデル1体）だけ表示する
+        onceExec.call {
+            guard let planeAnchor = anchor as? ARPlaneAnchor else {fatalError()}
+            //sceneとnodeを読み込み
+            guard let scene = SCNScene(named: "model.scn", inDirectory: "art.scnassets/Raikou") else {fatalError()}
+            guard let bearNode = scene.rootNode.childNode(withName: "SketchUp", recursively: true) else {fatalError()}
 
-        // nodeのスケールを調整する
-        let (min, max) = bearNode.boundingBox
-        let w = CGFloat(max.x - min.x)
-        // 0.1mを基準にした縮尺を計算
-        let magnification = 0.1 / w
-        bearNode.scale = SCNVector3(magnification, magnification, magnification)
-        // nodeのポジションを設定
-        bearNode.position = SCNVector3(planeAnchor.center.x, 0, planeAnchor.center.z)
+            // nodeのスケールを調整する
+            let (min, max) = bearNode.boundingBox
+            let w = CGFloat(max.x - min.x)
+            // Xmを基準にした縮尺を計算
+            let magnification = 0.5 / w
+            bearNode.scale = SCNVector3(magnification, magnification, magnification)
+            // nodeのポジションを設定
+            bearNode.position = SCNVector3(planeAnchor.center.x, 0, planeAnchor.center.z)
 
-        // 作成したノードを追加
-        DispatchQueue.main.async(execute: {
-            node.addChildNode(bearNode)
+            // 作成したノードを追加
+            DispatchQueue.main.async(execute: {
+                node.addChildNode(bearNode)
         })
+        }
     }
 }
 
