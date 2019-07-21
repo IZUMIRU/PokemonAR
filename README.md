@@ -13,7 +13,7 @@
 
 ## Qiita
 
-- [[Swift/ARKit2] ライコウは松屋派、スイクンはすき家派。](https://qiita.com/IZUMIRU/private/e64328a2e59af8e219db)
+- [[Swift/ARKit2] ライコウは松屋派、スイクンはすき家派。](https://qiita.com/IZUMIRU/items/e64328a2e59af8e219db)
 
 ## 3Dモデル素材
 
